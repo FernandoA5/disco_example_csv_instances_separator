@@ -100,13 +100,34 @@ fn main() {
     }
 
     //Imprimimos la lista mala
-    for caso in lista_mala {
+    for caso in lista_mala.clone() {
         println!("Caso: {}", caso.case_id);
     }
     //Imprimimos la lista buena
     println!("Lista buena");
-    for caso in lista_buena {
+    for caso in lista_buena.clone() {
         println!("Caso: {} | Activity: {}", caso.case_id, caso.activity);
     }
+
+    
+    //Guardamos la lista buena en un CSV
+    let mut wtr = csv::Writer::from_path("data/casos_buenos.csv").unwrap();
+    //Escribimos el header
+    wtr.write_record(&["case_id", "activity", "start_date", "end_date", "agent_position", "customer_id", "product", "service_type", "resource"]).unwrap();
+    //Escribimos los registros
+    for caso in lista_buena.clone() {
+        wtr.write_record(&[caso.case_id, caso.activity, caso.start_date, caso.end_date, caso.agent_position, caso.customer_id, caso.product, caso.service_type, caso.resource]).unwrap();
+    }
+    wtr.flush().unwrap();
+
+    //Guardamos la lista mala en un CSV
+    let mut wtr = csv::Writer::from_path("data/casos_malos.csv").unwrap();
+    //Escribimos el header
+    wtr.write_record(&["case_id", "activity", "start_date", "end_date", "agent_position", "customer_id", "product", "service_type", "resource"]).unwrap();
+    //Escribimos los registros
+    for caso in lista_mala.clone() {
+        wtr.write_record(&[caso.case_id, caso.activity, caso.start_date, caso.end_date, caso.agent_position, caso.customer_id, caso.product, caso.service_type, caso.resource]).unwrap();
+    }
+    wtr.flush().unwrap();
 
 }
