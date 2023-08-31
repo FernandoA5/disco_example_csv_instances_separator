@@ -74,50 +74,27 @@ fn main() {
 
     let mut lista_buena: Vec<Caso> = Vec::new();
     let mut lista_mala: Vec<Caso> = Vec::new();
-
-    //Empecemos con la lista mala, aquí pondremos todos los casos que solo tengan una actividad
-    for lista_de_casos in lista_de_listas_de_casos.clone() {
-        if lista_de_casos.len() == 1 {
-            lista_mala.push(lista_de_casos[0].clone());
-        } else {
-            //Aquí debemos seguir filtrando:
-            //Temporalmente daremos por buenos aquellos que contengan por lo menos una Handle activity
-            //Recorremos la lista de listas de casos 
-            for lista_de_casos in lista_de_listas_de_casos.clone() {
-                //Recorremos la lista de casos
-                let mut valida = false;
-                for caso in lista_de_casos.clone() {
-                    //Si el caso es una handle activity
-                    if caso.activity.contains("Handle") {
-                        //Damos la lista por buena
-                        valida = true;
-                        break;
-                    }
-                }
-
-                //Si la lista es valida, la agregamos a la lista buena
-                if valida {
-                    for caso in lista_de_casos {
-                        //Revisamos el el unique_id no se encuentre ya en la lista buena
-                        for caso_bueno in lista_buena.clone() {
-                            if caso_bueno.unic_id == caso.unic_id {
-                                continue;
-                            }
-                        }
-                        lista_buena.push(caso);
-                    }
-                } else {
-                    //Si no, la agregamos a la lista mala
-                    for caso in lista_de_casos {
-                        //Revismos que el unique_id no se encuentre ya en la lista mala
-                        for caso_malo in lista_mala.clone() {
-                            if caso_malo.unic_id == caso.unic_id {
-                                continue;
-                            }
-                        }
-                        lista_mala.push(caso);
-                    }
-                }
+    
+    //LISTA MALA: TODO LO QUE SOLO TENGA UNA ACTIVIDAD, O QUE TODAS SUS ACTIVIDADES SEAN INBOUND CALL
+    //Recorremos todas las listas de casos
+    for lista_de_casos in lista_de_listas_de_casos {
+        //Recorremos cada caso de cada lista
+        let mut contador = 0; //Si algo no es Inbound Call, la lista es buena.
+        for caso in lista_de_casos.clone() {
+            if caso.activity != "Inbound Call" {
+                contador += 1;
+                break;
+            }
+        }
+        //IF contador != 0 Agregamos todos los elementos de la lista de casos a la lista buena
+        if contador != 0 {
+            for caso in lista_de_casos.clone() {
+                lista_buena.push(caso);
+            }
+        }
+        else{
+            for caso in lista_de_casos.clone() {
+                lista_mala.push(caso);
             }
         }
     }
